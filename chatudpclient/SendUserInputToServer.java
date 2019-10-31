@@ -21,11 +21,13 @@ public class SendUserInputToServer implements Runnable {
     DatagramSocket socket;
     InetAddress address;
     int UDP_port;
+    String nome;
     
-    SendUserInputToServer(DatagramSocket socket, InetAddress address, int UDP_port) {
+    SendUserInputToServer(DatagramSocket socket, InetAddress address, int UDP_port, String nome) {
         this.socket = socket;
         this.address = address;
         this.UDP_port = UDP_port;
+        this.nome=nome;//Aggiunta del nickname
     }
     /**
      *
@@ -40,10 +42,11 @@ public class SendUserInputToServer implements Runnable {
 
         try {
             System.out.print("> ");
+            
             do {
-                //Leggo da tastiera il messaggio utente vuole inviare
+                //Leggo da tastiera il messaggio utente vuole inviareciac
                 messaggio = tastiera.nextLine();
-
+                messaggio= nome.concat(": "+messaggio);//Ogni volta al MEX viene concatenato il nickname per rendere riconoscibile il client nella chat
                 //Trasformo in array di byte la stringa che voglio inviare
                 buffer = messaggio.getBytes("UTF-8");
 
@@ -54,6 +57,7 @@ public class SendUserInputToServer implements Runnable {
                 // spedisco il datagram
                 socket.send(userDatagram);
             } while (messaggio.compareTo("quit") != 0); //se utente digita quit il tread termina
+            socket.close();
         } catch (IOException ex) {
             Logger.getLogger(ChatUDPclient.class.getName()).log(Level.SEVERE, null, ex);
         }
